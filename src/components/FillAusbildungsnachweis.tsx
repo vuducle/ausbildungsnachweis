@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect, useCallback } from "react";
 import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";
 import GeneralInfo from "./GeneralInfo";
@@ -692,32 +692,39 @@ const FillAusbildungsnachweis: React.FC = () => {
     });
   };
 
-  const fillForm = async (download: boolean = false) => {
-    const formURL = `${process.env.PUBLIC_URL}/assets/test.pdf#toolbar=0&navpanes=0`;
+  const generatePdf = useCallback(
+    async (download: boolean = false) => {
+      const formURL = `${process.env.PUBLIC_URL}/assets/test.pdf#toolbar=0&navpanes=0`;
 
-    const formBytes = await fetch(formURL).then((res) => res.arrayBuffer());
-    const pdfDoc = await PDFDocument.load(formBytes);
+      const formBytes = await fetch(formURL).then((res) => res.arrayBuffer());
+      const pdfDoc = await PDFDocument.load(formBytes);
 
-    const form = pdfDoc.getForm();
+      const form = pdfDoc.getForm();
 
-    Object.entries(formData).forEach(([key, { value }]) => {
-      form.getTextField(key).setText(value.toString());
-    });
+      Object.entries(formData).forEach(([key, { value }]) => {
+        form.getTextField(key).setText(value.toString());
+      });
 
-    const pdfBytes = await pdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    if (download === true) {
-      saveAs(blob, "Ausbildungsnachweis.pdf");
-    } else {
-      setPreviewPdfUrl(URL.createObjectURL(blob));
-    }
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: "application/pdf" });
+      if (download === true) {
+        saveAs(blob, "Ausbildungsnachweis.pdf");
+      } else {
+        setPreviewPdfUrl(URL.createObjectURL(blob));
+      }
 
-    localStorage.setItem("formData", JSON.stringify(formData));
-  };
+      localStorage.setItem("formData", JSON.stringify(formData));
+    },
+    [formData]
+  );
+
+  const fillForm = useCallback(() => {
+    generatePdf();
+  }, [generatePdf]);
 
   useEffect(() => {
     fillForm();
-  }, [formData]);
+  }, [fillForm]);
 
   const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -738,7 +745,7 @@ const FillAusbildungsnachweis: React.FC = () => {
         ))}
         <button
           className="bg-rose-500 hover:bg-rose-700 transition-all text-white font-bold py-2 px-4 rounded-full"
-          onClick={() => fillForm(true)}
+          onClick={() => generatePdf(true)}
         >
           Generate PDF
         </button>

@@ -3,6 +3,7 @@ import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";
 import GeneralInfo from "./GeneralInfo";
 import DaySection from "./DaySection";
+import Info from "./Info";
 
 interface FormData {
   [key: string]: {
@@ -21,13 +22,13 @@ const initialFormData: FormData = {
     type: "text",
   },
   DatumStart: {
-    value: "2022-07-04",
+    value: "04.07.2022",
     required: true,
     placeholder: "DatumStart *",
     type: "date",
   },
   DatumEnde: {
-    value: "2022-07-10",
+    value: "10.07.2022",
     required: true,
     placeholder: "DatumEnde *",
     type: "date",
@@ -84,25 +85,25 @@ const initialFormData: FormData = {
   Mo_Time_2: {
     value: 2,
     required: false,
-    placeholder: "Montag, Zeit von Beschreibung #1",
+    placeholder: "Montag, Zeit von Beschreibung #2",
     type: "number",
   },
   Mo_Time_3: {
     value: 2,
     required: false,
-    placeholder: "Montag, Zeit von Beschreibung #1",
+    placeholder: "Montag, Zeit von Beschreibung #3",
     type: "number",
   },
   Mo_Time_4: {
     value: "",
     required: false,
-    placeholder: "Montag, Zeit von Beschreibung #1",
+    placeholder: "Montag, Zeit von Beschreibung #4",
     type: "number",
   },
   Mo_Time_5: {
     value: "",
     required: false,
-    placeholder: "Montag, Zeit von Beschreibung #1",
+    placeholder: "Montag, Zeit von Beschreibung #5",
     type: "number",
   },
   Mo_Total: {
@@ -168,7 +169,7 @@ const initialFormData: FormData = {
   Tu_5: {
     value: "",
     required: false,
-    placeholder: "Dienstag, Beschreibung, Tätigkeit #4",
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #5",
     type: "text",
   },
   Tu_Time_1: {
@@ -675,7 +676,10 @@ const initialFormData: FormData = {
 };
 
 const FillAusbildungsnachweis: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [formData, setFormData] = useState<FormData>(() => {
+    const savedFormData = localStorage.getItem("formData");
+    return savedFormData ? JSON.parse(savedFormData) : initialFormData;
+  });
   const [previewPdfUrl, setPreviewPdfUrl] = useState<string>("");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -689,7 +693,7 @@ const FillAusbildungsnachweis: React.FC = () => {
   };
 
   const fillForm = async (download: boolean = false) => {
-    const formURL = `${process.env.PUBLIC_URL}/assets/test.pdf`;
+    const formURL = `${process.env.PUBLIC_URL}/assets/test.pdf#toolbar=0&navpanes=0`;
 
     const formBytes = await fetch(formURL).then((res) => res.arrayBuffer());
     const pdfDoc = await PDFDocument.load(formBytes);
@@ -707,6 +711,8 @@ const FillAusbildungsnachweis: React.FC = () => {
     } else {
       setPreviewPdfUrl(URL.createObjectURL(blob));
     }
+
+    localStorage.setItem("formData", JSON.stringify(formData));
   };
 
   useEffect(() => {
@@ -716,10 +722,11 @@ const FillAusbildungsnachweis: React.FC = () => {
   const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
   return (
-    <div className="flex container mx-auto">
+    <div className="flex container mx-auto bg-white p-4 bg-opacity-75 rounded-md">
       <div className="w-full overflow-y-scroll xl:w-7/12 xl:h-700">
         {/* <form>{renderInputFields()}</form>
         <button onClick={fillForm}>Generate PDF</button> */}
+        <Info />
         <GeneralInfo formData={formData} handleChange={handleChange} />
         {days.map((day) => (
           <DaySection

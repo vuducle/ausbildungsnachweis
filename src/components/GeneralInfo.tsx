@@ -31,9 +31,9 @@ const GeneralInfo: React.FC<GeneralInfoProps> = ({
 
   return (
     <div className="flex flex-wrap">
-      <h3 className="w-full text-3xl mb-4">Allgemeine Informationen</h3>
+      <h3 className="w-full text-3xl mb-4 flex">Allgemeine Informationen</h3>
       {fields.map((key) => (
-        <div key={key} className="w-full md:w-1/2 xl:w-2/6 p-2">
+        <div key={key} className="w-full md:w-1/2 xl:w-2/6 mb-2">
           <label className="flex text-xs">{formData[key].placeholder}</label>
           <input
             type={formData[key].type}

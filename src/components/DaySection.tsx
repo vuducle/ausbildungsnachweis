@@ -22,9 +22,9 @@ const DaySection: React.FC<DaySectionProps> = ({
 
   return (
     <div className="flex flex-wrap">
-      <h3 className="w-full text-3xl mb-4">{day}</h3>
+      <h3 className="w-full text-3xl mb-4 flex">{day}</h3>
       {dayFields.map((key) => (
-        <div key={key} className="w-full md:w-1/2 xl:w-2/6 p-2">
+        <div key={key} className="w-full md:w-1/2 xl:w-2/6 mb-2">
           <label className="flex text-xs">{formData[key].placeholder}</label>
           <input
             className="appearance-none block bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"

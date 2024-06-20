@@ -1,120 +1,677 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";
+import GeneralInfo from "./GeneralInfo";
+import DaySection from "./DaySection";
 
 interface FormData {
-  [key: string]: string;
+  [key: string]: {
+    value: string | number;
+    required: boolean;
+    placeholder: string;
+    type: string;
+  };
 }
 
 const initialFormData: FormData = {
-  Name: "Vu Duc Le",
-  DatumStart: "04.07.2022",
-  DatumEnde: "10.07.2022",
-  Nr: "97",
-  Ausbildungsjahr: "2. Lehrjahr",
-  Mo_Sec_1: "",
-  Mo_1: "",
-  Mo_Time_1: "",
-  Mo_Sec_2: "",
-  Mo_2: "",
-  Mo_Time_2: "",
-  Mo_Sec_3: "",
-  Mo_3: "",
-  Mo_Time_3: "",
-  Mo_Sec_4: "",
-  Mo_4: "",
-  Mo_Time_4: "",
-  Mo_Sec_5: "",
-  Mo_5: "",
-  Mo_Time_5: "",
-  Mo_Total: "",
-  Tu_Sec_1: "",
-  Tu_1: "",
-  Tu_Time_1: "",
-  Tu_Sec_2: "",
-  Tu_2: "",
-  Tu_Time_2: "",
-  Tu_Sec_3: "",
-  Tu_3: "",
-  Tu_Time_3: "",
-  Tu_Sec_4: "",
-  Tu_4: "",
-  Tu_Time_4: "",
-  Tu_Sec_5: "",
-  Tu_5: "",
-  Tu_Time_5: "",
-  Tu_Total: "",
-  We_Sec_1: "",
-  We_1: "",
-  We_Time_1: "",
-  We_Sec_2: "",
-  We_2: "",
-  We_Time_2: "",
-  We_3: "",
-  We_Time_3: "",
-  We_Sec_3: "",
-  We_4: "",
-  We_Time_4: "",
-  We_Sec_4: "",
-  We_Sec_5: "",
-  We_5: "",
-  We_Time_5: "",
-  We_Total: "",
-  Th_Sec_1: "",
-  Th_1: "",
-  Th_Time_1: "",
-  Th_Sec_2: "",
-  Th_2: "",
-  Th_Time_2: "",
-  Th_3: "",
-  Th_Time_3: "",
-  Th_Sec_3: "",
-  Th_4: "",
-  Th_Time_4: "",
-  Th_Sec_4: "",
-  Th_Sec_5: "",
-  Th_5: "",
-  Th_Time_5: "",
-  Th_Total: "",
-  Fr_1: "",
-  Fr_Sec_1: "",
-  Fr_Time_1: "",
-  Fr_2: "",
-  Fr_Sec_2: "",
-  Fr_Time_2: "",
-  Fr_3: "",
-  Fr_Sec_3: "",
-  Fr_Time_3: "",
-  Fr_4: "",
-  Fr_Time_4: "",
-  Fr_Sec_4: "",
-  Fr_5: "",
-  Fr_Sec_5: "",
-  Fr_Time_5: "",
-  Sa_Sec_1: "",
-  Sa_1: "",
-  Sa_Time_1: "",
-  Sa_2: "",
-  Sa_Sec_2: "",
-  Sa_Time_2: "",
-  Sa_3: "",
-  Sa_Time_3: "",
-  Sa_Sec_3: "",
-  Su_1: "",
-  Su_Sec_1: "",
-  Su_Time_1: "",
-  Su_2: "",
-  Su_Sec_2: "",
-  Su_Time_2: "",
-  Su_Sec_3: "",
-  Su_3: "",
-  Su_Time_3: "",
-  Gesamtstunden: "",
-  Remark: "",
-  Ausbilder: "",
-  Date_Azubi: "",
-  Sig_Azubi: "",
-  Sig_Ausbilder: "",
+  Name: {
+    value: "Vu Duc Le",
+    required: true,
+    placeholder: "Name *",
+    type: "text",
+  },
+  DatumStart: {
+    value: "2022-07-04",
+    required: true,
+    placeholder: "DatumStart *",
+    type: "date",
+  },
+  DatumEnde: {
+    value: "2022-07-10",
+    required: true,
+    placeholder: "DatumEnde *",
+    type: "date",
+  },
+  Nr: {
+    value: 97,
+    required: true,
+    placeholder: "Nummer *",
+    type: "number",
+  },
+  Ausbildungsjahr: {
+    value: "2. Lehrjahr",
+    required: true,
+    placeholder: "Lehrjahr Azubi *",
+    type: "text",
+  },
+  // Montag
+  Mo_1: {
+    value: "Webseite gecodet mit M. O.",
+    required: false,
+    placeholder: "Montag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Mo_2: {
+    value: "Teambesprechung mit S. R.",
+    required: false,
+    placeholder: "Montag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Mo_3: {
+    value: "Unterstützung von den TD'S",
+    required: false,
+    placeholder: "Montag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Mo_4: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  Mo_5: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Beschreibung, Tätigkeit #5",
+    type: "text",
+  },
+  Mo_Time_1: {
+    value: 2,
+    required: false,
+    placeholder: "Montag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Mo_Time_2: {
+    value: 2,
+    required: false,
+    placeholder: "Montag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Mo_Time_3: {
+    value: 2,
+    required: false,
+    placeholder: "Montag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Mo_Time_4: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Mo_Time_5: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Mo_Total: {
+    value: 6,
+    required: false,
+    placeholder: "Montag, Gesamtzeit",
+    type: "number",
+  },
+  Mo_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Abteilung #1",
+    type: "text",
+  },
+  Mo_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Abteilung #2",
+    type: "text",
+  },
+  Mo_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Abteilung #3",
+    type: "text",
+  },
+  Mo_Sec_4: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Abteilung #4",
+    type: "text",
+  },
+  Mo_Sec_5: {
+    value: "",
+    required: false,
+    placeholder: "Montag, Abteilung #5",
+    type: "text",
+  },
+  Tu_1: {
+    value: "Webseite gecodet mit F. O.",
+    required: false,
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Tu_2: {
+    value: "Besprechung mit F. R.",
+    required: false,
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Tu_3: {
+    value: "Layout designet mit C. W.",
+    required: false,
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Tu_4: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  Tu_5: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  Tu_Time_1: {
+    value: 2,
+    required: false,
+    placeholder: "Dienstag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Tu_Time_2: {
+    value: 2,
+    required: false,
+    placeholder: "Dienstag, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  Tu_Time_3: {
+    value: 2,
+    required: false,
+    placeholder: "Dienstag, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  Tu_Time_4: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Zeit von Beschreibung #4",
+    type: "number",
+  },
+  Tu_Time_5: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Zeit von Beschreibung #5",
+    type: "number",
+  },
+  Tu_Total: {
+    value: 6,
+    required: false,
+    placeholder: "Dienstag, Gesamtzeit",
+    type: "number",
+  },
+  Tu_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Abteilung #1",
+    type: "text",
+  },
+  Tu_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Abteilung #2",
+    type: "text",
+  },
+  Tu_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Abteilung #3",
+    type: "text",
+  },
+  Tu_Sec_4: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Abteilung #4",
+    type: "text",
+  },
+  Tu_Sec_5: {
+    value: "",
+    required: false,
+    placeholder: "Dienstag, Abteilung #5",
+    type: "text",
+  },
+  // Mittwoch
+  We_1: {
+    value: "Webseite gecodet alleine",
+    required: false,
+    placeholder: "Mittwoch, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  We_2: {
+    value: "Layout gemacht alleine",
+    required: false,
+    placeholder: "Mittwoch, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  We_3: {
+    value: "Kundengespräch mit Fr. Myoi",
+    required: false,
+    placeholder: "Mittwoch, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  We_4: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  We_5: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Beschreibung, Tätigkeit #5",
+    type: "text",
+  },
+  We_Time_1: {
+    value: 2,
+    required: false,
+    placeholder: "Mittwoch, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  We_Time_2: {
+    value: 2,
+    required: false,
+    placeholder: "Mittwoch, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  We_Time_3: {
+    value: 2,
+    required: false,
+    placeholder: "Mittwoch, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  We_Time_4: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Zeit von Beschreibung #4",
+    type: "number",
+  },
+  We_Time_5: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Zeit von Beschreibung #5",
+    type: "number",
+  },
+  We_Total: {
+    value: 6,
+    required: false,
+    placeholder: "Mittwoch, Gesamtzeit",
+    type: "number",
+  },
+  We_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Abteilung #1",
+    type: "text",
+  },
+  We_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Abteilung #2",
+    type: "text",
+  },
+  We_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Abteilung #3",
+    type: "text",
+  },
+  We_Sec_4: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Abteilung #4",
+    type: "text",
+  },
+  We_Sec_5: {
+    value: "",
+    required: false,
+    placeholder: "Mittwoch, Abteilung #5",
+    type: "text",
+  },
+  // Donnerstag
+  Th_1: {
+    value: "Unterricht - Datenbanken mit Fr. Hirai",
+    required: false,
+    placeholder: "Donnerstag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Th_2: {
+    value: "Projektarbeit - InDesign mit Hr. Dorri",
+    required: false,
+    placeholder: "Donnerstag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Th_3: {
+    value: "Unterricht - Medienwirtschaft mit Hr. Yildirim",
+    required: false,
+    placeholder: "Donnerstag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Th_4: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  Th_5: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Beschreibung, Tätigkeit #5",
+    type: "text",
+  },
+  Th_Time_1: {
+    value: 2,
+    required: false,
+    placeholder: "Donnerstag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Th_Time_2: {
+    value: 2,
+    required: false,
+    placeholder: "Donnerstag, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  Th_Time_3: {
+    value: 2,
+    required: false,
+    placeholder: "Donnerstag, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  Th_Time_4: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Zeit von Beschreibung #4",
+    type: "number",
+  },
+  Th_Time_5: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Zeit von Beschreibung #5",
+    type: "number",
+  },
+  Th_Total: {
+    value: 6,
+    required: false,
+    placeholder: "Donnerstag, Gesamtzeit",
+    type: "number",
+  },
+  Th_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Abteilung #1",
+    type: "text",
+  },
+  Th_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Abteilung #2",
+    type: "text",
+  },
+  Th_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Abteilung #3",
+    type: "text",
+  },
+  Th_Sec_4: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Abteilung #4",
+    type: "text",
+  },
+  Th_Sec_5: {
+    value: "",
+    required: false,
+    placeholder: "Donnerstag, Abteilung #5",
+    type: "text",
+  },
+  // Freitag
+  Fr_1: {
+    value: "Unterricht - Datenbanken mit Fr. Hirai",
+    required: false,
+    placeholder: "Freitag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Fr_2: {
+    value: "Projektarbeit - Logogestaltung - Einzelarbeit",
+    required: false,
+    placeholder: "Freitag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Fr_3: {
+    value: "Unterricht - Medienwirtschaft mit Hr. Yildirim",
+    required: false,
+    placeholder: "Freitag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Fr_4: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Beschreibung, Tätigkeit #4",
+    type: "text",
+  },
+  Fr_5: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Beschreibung, Tätigkeit #5",
+    type: "text",
+  },
+  Fr_Total: {
+    value: 6,
+    required: false,
+    placeholder: "Freitag, Gesamtzeit",
+    type: "number",
+  },
+  Fr_Time_1: {
+    value: 2,
+    required: false,
+    placeholder: "Freitag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Fr_Time_2: {
+    value: 2,
+    required: false,
+    placeholder: "Freitag, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  Fr_Time_3: {
+    value: 2,
+    required: false,
+    placeholder: "Freitag, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  Fr_Time_4: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Zeit von Beschreibung #4",
+    type: "number",
+  },
+  Fr_Time_5: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Zeit von Beschreibung #5",
+    type: "number",
+  },
+  Fr_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Abteilung #1",
+    type: "text",
+  },
+  Fr_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Abteilung #2",
+    type: "text",
+  },
+  Fr_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Abteilung #3",
+    type: "text",
+  },
+  Fr_Sec_4: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Abteilung #4",
+    type: "text",
+  },
+  Fr_Sec_5: {
+    value: "",
+    required: false,
+    placeholder: "Freitag, Abteilung #5",
+    type: "text",
+  },
+  Sa_1: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Sa_2: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Sa_3: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Sa_Time_1: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Sa_Time_2: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  Sa_Time_3: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  Sa_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Abteilung #1",
+    type: "text",
+  },
+  Sa_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Abteilung #2",
+    type: "text",
+  },
+  Sa_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Samstag, Abteilung #3",
+    type: "text",
+  },
+  Su_1: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Beschreibung, Tätigkeit #1",
+    type: "text",
+  },
+  Su_2: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Beschreibung, Tätigkeit #2",
+    type: "text",
+  },
+  Su_3: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Beschreibung, Tätigkeit #3",
+    type: "text",
+  },
+  Su_Time_1: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Zeit von Beschreibung #1",
+    type: "number",
+  },
+  Su_Time_2: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Zeit von Beschreibung #2",
+    type: "number",
+  },
+  Su_Time_3: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Zeit von Beschreibung #3",
+    type: "number",
+  },
+  Su_Sec_1: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Abteilung #1",
+    type: "text",
+  },
+  Su_Sec_2: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Abteilung #1",
+    type: "text",
+  },
+  Su_Sec_3: {
+    value: "",
+    required: false,
+    placeholder: "Sonntag, Abteilung #1",
+    type: "text",
+  },
+  Gesamtstunden: {
+    value: 32,
+    required: false,
+    placeholder: "Gesamtstunden",
+    type: "number",
+  },
+  Remark: {
+    value: "",
+    required: false,
+    placeholder: "Bemerkung",
+    type: "text",
+  },
+  Ausbilder: {
+    value: "",
+    required: false,
+    placeholder: "Ausbilder/in",
+    type: "text",
+  },
+  Date_Azubi: {
+    value: "",
+    required: false,
+    placeholder: "Datum - Azubi",
+    type: "date",
+  },
+  Sig_Azubi: {
+    value: "",
+    required: false,
+    placeholder: "Signatur - Azubi",
+    type: "text",
+  },
+  Sig_Ausbilder: {
+    value: "",
+    required: false,
+    placeholder: "Signatur - Ausbilder/in",
+    type: "text",
+  },
 };
 
 const FillAusbildungsnachweis: React.FC = () => {
@@ -123,10 +680,15 @@ const FillAusbildungsnachweis: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const updatedValue =
+      formData[name].type === "number" ? Number(value) : value;
+    setFormData({
+      ...formData,
+      [name]: { ...formData[name], value: updatedValue },
+    });
   };
 
-  const fillForm = async () => {
+  const fillForm = async (download: boolean = false) => {
     const formURL = `${process.env.PUBLIC_URL}/assets/test.pdf`;
 
     const formBytes = await fetch(formURL).then((res) => res.arrayBuffer());
@@ -134,44 +696,56 @@ const FillAusbildungsnachweis: React.FC = () => {
 
     const form = pdfDoc.getForm();
 
-    Object.entries(formData).forEach(([key, value]) => {
-      form.getTextField(key).setText(value);
+    Object.entries(formData).forEach(([key, { value }]) => {
+      form.getTextField(key).setText(value.toString());
     });
 
     const pdfBytes = await pdfDoc.save();
     const blob = new Blob([pdfBytes], { type: "application/pdf" });
-    setPreviewPdfUrl(URL.createObjectURL(blob));
+    if (download === true) {
+      saveAs(blob, "Ausbildungsnachweis.pdf");
+    } else {
+      setPreviewPdfUrl(URL.createObjectURL(blob));
+    }
   };
 
   useEffect(() => {
     fillForm();
   }, [formData]);
 
-  const renderInputFields = () => {
-    return Object.keys(initialFormData).map((key) => (
-      <input
-        key={key}
-        type="text"
-        name={key}
-        value={formData[key]}
-        onChange={handleChange}
-        placeholder={key}
-      />
-    ));
-  };
+  const days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
   return (
-    <div>
-      <form>{renderInputFields()}</form>
-      <button onClick={fillForm}>Generate PDF</button>
-      {previewPdfUrl && (
-        <iframe
-          src={previewPdfUrl}
-          title="PDF Preview"
-          width="100%"
-          height="600px"
-        />
-      )}
+    <div className="flex container mx-auto">
+      <div className="w-full overflow-y-scroll xl:w-7/12 xl:h-700">
+        {/* <form>{renderInputFields()}</form>
+        <button onClick={fillForm}>Generate PDF</button> */}
+        <GeneralInfo formData={formData} handleChange={handleChange} />
+        {days.map((day) => (
+          <DaySection
+            key={day}
+            day={day}
+            formData={formData}
+            handleChange={handleChange}
+          />
+        ))}
+        <button
+          className="bg-rose-500 hover:bg-rose-700 transition-all text-white font-bold py-2 px-4 rounded-full"
+          onClick={() => fillForm(true)}
+        >
+          Generate PDF
+        </button>
+      </div>
+      <div className="flex-1 w-full xl:w-5/12">
+        {previewPdfUrl && (
+          <iframe
+            src={previewPdfUrl}
+            title="PDF Preview"
+            width="100%"
+            className="xl:h-700"
+          />
+        )}
+      </div>
     </div>
   );
 };

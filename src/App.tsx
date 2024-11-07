@@ -1,6 +1,7 @@
 import "./App.css";
 import FillAusbildungsnachweis from "./components/FillAusbildungsnachweis";
-import TWICE from "./assets/twice_one.jpg";
+// import TWICE from "./assets/twice_one.jpg";
+import BG from "./assets/bg.jpg";
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <div
         className="flex justify-center items-center h-screen"
         style={{
-          background: `url(${TWICE})`,
+          background: `url(${BG})`,
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",

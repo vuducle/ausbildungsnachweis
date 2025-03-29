@@ -37,7 +37,6 @@ _Generated PDF preview_
 - React 18
 - TailwindCSS
 - React-PDF
-- Date-fns
 
 ## 📥 Installation
 
